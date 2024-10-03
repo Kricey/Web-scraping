@@ -1,1 +1,3 @@
-# Web-scraping
+In this LIHKG scraping task, we simulate a browser run by using the Selenium python library and navigate to the LIHKG website's API endpoints, retrieve JSON data for each thread and page, and store it in a CSV file. 
+
+The script begins by launching a headless Chrome browser and directing it to the specified thread page. By dynamically creating an <a> tag within the page, the script navigates to the API URL and fetches the corresponding JSON data, which is then parsed. After each retrieval, the data is saved to a file, organised by thread ID and page number. The script supports resuming from the last saved position, allowing it to continue scraping from where it left off in the event of an interruption. To emulate typical user behaviour and mitigate anti-scraping mechanisms, random delays and robust error handling are incorporated throughout the process.
