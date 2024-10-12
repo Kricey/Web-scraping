@@ -1,10 +1,10 @@
 import requests
 import json
 
-BEARER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAANJPvgEAAAAAiuD32jKrY6OjpkC5qihH6j5FNys%3DQsIo7g7Lo6zPR6v15KxkPyD0qhnxnmPKZZf97Qoeg9PQciDZRY'
+BEARER_TOKEN = 'your_token'
 
 # endpoint
-url = "https://api.twitter.com/2/tweets/search/recent?query=conversation_id%3A1833728804579111268%20lang%3Aen&max_results=10&sort_order=recency&tweet.fields=attachments,author_id,conversation_id,created_at,in_reply_to_user_id,public_metrics&expansions=author_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=description,id,name,public_metrics"
+url = "https://api.twitter.com/2/tweets/search/recent?query=conversation_id%3Athreshold%20lang%3Aen&max_results=10&sort_order=recency&tweet.fields=attachments,author_id,conversation_id,created_at,in_reply_to_user_id,public_metrics&expansions=author_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=description,id,name,public_metrics"
 
 headers = {
     'Authorization': f'Bearer {BEARER_TOKEN}',
