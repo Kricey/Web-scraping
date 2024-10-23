@@ -55,12 +55,12 @@ def get_resume_position(filename: str, from_thread: int) -> Tuple[int, int]:
     if not os.path.exists(filename):
         return from_thread, 1
 
-    line = None  # 初始化 line 变量
+    line = None
     with open(filename) as f:
         for line in f:
             pass  # locate the last line
 
-    if line is None:  # 如果文件为空，line 会是 None
+    if line is None:
         print(f"WARNING: File {filename} is empty. Starting from thread {from_thread}, page 1.")
         return from_thread, 1
 
@@ -138,48 +138,17 @@ def minimize_json(obj: object) -> str:
 
     return json.dumps(obj, separators=(',', ':'), ensure_ascii=False)
 
-#def write_file(f: TextIO, obj: object, thread_id: int, page: int) -> None:
-#    '''
-#    Write a result to the output file.
-#    '''
-#
-#    # ignore keyboard interrupt to ensure the integrity of file
-#    old_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
-#    print(thread_id, page, minimize_json(obj), sep='\t', file=f)
-#    signal.signal(signal.SIGINT, old_handler)
-
 def write_file(f: TextIO, obj: object, thread_id: int, page: int) -> None:
     '''
     Write a result to the output file in a standard CSV format.
     '''
-    # 将JSON对象转为字符串，并确保它是用双引号包裹的
     json_str = json.dumps(obj, separators=(',', ':'), ensure_ascii=False)
 
-    # 使用逗号作为分隔符，确保每个字段都用双引号包裹
     csv_row = f'{thread_id}\t{page}\t{json_str}\n'
 
-    # 忽略键盘中断，确保文件完整性
     old_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
     f.write(csv_row)
     signal.signal(signal.SIGINT, old_handler)
-
-""" def write_file(f: TextIO, obj: object, thread_id: int, page: int) -> None:
-    '''
-    Write a result to the output file in a standard CSV format.
-    '''
-    # 将JSON对象转为字符串，并确保它是用双引号包裹的
-    # 同时处理换行符和双引号，避免CSV文件格式混乱
-    json_str = json.dumps(obj, separators=(',', ':'), ensure_ascii=False)
-    json_str = json_str.replace('"', '""')  # CSV要求字段中的双引号要使用两个双引号
-    json_str = json_str.replace('\n', '\\n')  # 替换换行符为转义形式
-
-    # 使用逗号作为分隔符，确保每个字段都用双引号包裹
-    csv_row = f'"{thread_id}","{page}","{json_str}"\n'
-
-    # 忽略键盘中断，确保文件完整性
-    old_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
-    f.write(csv_row)
-    signal.signal(signal.SIGINT, old_handler) """
 
 def init_lihkg_context(browser: WebDriver) -> WebElement:
     '''
@@ -210,11 +179,11 @@ def start_browser(filename: str, thread_id: int, to_thread: int, page: int, pbar
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--log-path=chromedriver.log')
 
-    # 添加反爬虫检测的CDP设置
+    # CDP
     options.add_experimental_option('excludeSwitches', ['enable-automation'])
     options.add_experimental_option('useAutomationExtension', False)
 
-    # 使用 ChromeDriverManager 自动管理 ChromeDriver 版本
+    # ChromeDriverManager自动管理更新ChromeDriver
     print("INFO: Starting Chrome browser with webdriver-manager...")
     service = Service(ChromeDriverManager().install())
     browser = webdriver.Chrome(service=service, options=options)
@@ -239,9 +208,8 @@ def start_browser(filename: str, thread_id: int, to_thread: int, page: int, pbar
                     thread_id_new, page = get_next_page_from_json(obj, thread_id, page)
                 else:
                     print(f"WARNING: No JSON object returned for thread {thread_id}, page {page}. Skipping to the next page.")
-                    thread_id_new, page = thread_id, page + 1  # 继续尝试下一个页面
-                
-                # 添加延时，模拟用户行为
+                    thread_id_new, page = thread_id, page + 1  # try next page
+            
                 sleep_time = random.uniform(4, 8)  # 随机延时 1 到 3 秒
                 print(f"INFO: Sleeping for {sleep_time:.2f} seconds before the next request...")
                 time.sleep(sleep_time)
@@ -265,15 +233,14 @@ def start_browser(filename: str, thread_id: int, to_thread: int, page: int, pbar
     return has_exception, thread_id, page
 
 def main():
-    from_thread = 3775474  # 从指定的线程 ID 开始
-    to_thread = from_thread + 1  # 只抓取一个线程
-
+    from_thread = 3775474 
+    to_thread = from_thread + 1 
     filename = make_filename(from_thread)
     
     print(f"INFO: Starting to fetch thread {from_thread}")
     
     thread_id = from_thread
-    page = 28  # 从第n页开始抓取
+    page = 1
     
     pbar = tqdm(total=1, smoothing=0.)
     
